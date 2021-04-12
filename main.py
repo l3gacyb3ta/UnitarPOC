@@ -1,6 +1,6 @@
 import os, uuid
 from flask import Flask, flash, request, redirect, url_for, send_from_directory, render_template
-#from flask_assets import Bundle, Environment
+from flask_assets import Bundle, Environment
 from werkzeug.utils import secure_filename
 
 #Constants
@@ -19,14 +19,13 @@ def allowed_file(filename):
 
 #Flask setup
 app = Flask(__name__)
-'''
 assets = Environment(app)
 css = Bundle("src/main.css", output="dist/main.css", filters="postcss")
 
 #css build
 assets.register("css", css)
 css.build()
-'''
+
 #Flask config
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = MEGABYTES * 1024 * 1024

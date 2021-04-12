@@ -1,16 +1,11 @@
-<!doctype html>
-<html>
-    <head>
-      <title>Upload new icon</title>
-    </head>
+{% extends "base.html" %}
 
-    <body>
-    <h1>Unitar</h1>
-    <hr>
-    <h2>Upload new icon</h2>
-      <form method=post enctype=multipart/form-data>
-        <input type=file name=file>
-        <input type=submit value=Upload>
-      </form>
-  </body>
-</html>
+{% block content %}
+  <h1>Unitar</h1>
+  <hr>
+  <h2>Upload new icon</h2>
+  <form method=post enctype=multipart/form-data>
+    <input type=file name=file>
+    <input type=submit value=Upload>
+  </form>
+{% endblock content %}
