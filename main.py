@@ -1,24 +1,39 @@
 import os, uuid
 from flask import Flask, flash, request, redirect, url_for, send_from_directory, render_template
+#from flask_assets import Bundle, Environment
 from werkzeug.utils import secure_filename
 
-def uuid_gen():
-  return uuid.uuid4().hex
-
+#Constants
 UPLOAD_FOLDER = 'icons'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'svg'}
-
 MEGABYTES = 5
 
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = MEGABYTES * 1024 * 1024
-app.config['SECRET_KEY'] = uuid_gen()
+#Utilities
+def uuid_gen():
+  #Generate a uuid
+  return uuid.uuid4().hex
 
 def allowed_file(filename):
   #Use the safer os.path.splitext instead of string manipulation
   return os.path.splitext(filename)[1].lower() in ALLOWED_EXTENSIONS
 
+#Flask setup
+app = Flask(__name__)
+'''
+assets = Environment(app)
+css = Bundle("src/main.css", output="dist/main.css", filters="postcss")
+
+#css build
+assets.register("css", css)
+css.build()
+'''
+#Flask config
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = MEGABYTES * 1024 * 1024
+app.config['SECRET_KEY'] = uuid_gen()
+
+
+#Home page (For now)
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
@@ -40,11 +55,15 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(url_for('uploaded_icon',
                                     filename=filename))
+                                    
     return render_template("upload.html")
 
+
+#Icon server
 @app.route('/icons/<filename>')
 def uploaded_icon(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               secure_filename(filename))
+  #Protects from getting files outside of icons.
+  return send_from_directory(app.config['UPLOAD_FOLDER'], secure_filename(filename))
 
-app.run(host='0.0.0.0', port=8080)
+if __name__ == "__main__":
+  app.run(host='0.0.0.0', port=8080)
