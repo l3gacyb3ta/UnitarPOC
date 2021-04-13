@@ -78,6 +78,10 @@ def upload_file():
                 users[uname] = users[uname] + [files[hashed_file]] if uname in users.keys() else [files[hashed_file]] # Adding to the user's list of icons
                 return redirect(url_for('uploaded_icon', filename = files[hashed_file])) 
 
+            else:
+                # If it's a new file, add the hash
+                files[hashed_file] = path
+
             users[uname] = users[uname] + [filename] if uname in users.keys() else [filename] # Adding to the user's list of icons
 
             # Give you your user page
