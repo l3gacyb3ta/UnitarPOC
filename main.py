@@ -15,6 +15,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = MEGABYTES * 1024 * 1024
 app.config['SECRET_KEY'] = uuid_gen()
 
+users = {'test': ['haha', 'hehe']}
+
 def allowed_file(filename):
   #Use the safer os.path.splitext instead of string manipulation
   return os.path.splitext(filename)[1].lower() in ALLOWED_EXTENSIONS
@@ -26,6 +28,8 @@ def upload_file():
         if 'file' not in request.files:
             flash('No icon in upload, maybe the file is corrupted?')
             return redirect(request.url)
+
+        uname = request.form['uname']
 
         file = request.files['file']
         # if user does not select file, browser also
@@ -47,5 +51,9 @@ def upload_file():
 @app.route('/icons/<filename>')
 def uploaded_icon(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], secure_filename(filename))
+
+@app.route('/user/<uname>')
+def user_icons(uname):
+    return render_template("user.html", icons = users[uname])
 
 app.run(host='0.0.0.0', port=8080)
