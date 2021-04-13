@@ -76,11 +76,11 @@ def upload_file():
             if hashed_file in files.keys():
                 os.remove(path) # Delete the new file (This is the best I could find)
                 users[uname] = users[uname] + [files[hashed_file]] if uname in users.keys() else [files[hashed_file]] # Adding to the user's list of icons
-                return redirect(url_for('uploaded_icon', filename = files[hashed_file])) 
+                return redirect("user/" + uname) 
 
             else:
                 # If it's a new file, add the hash
-                files[hashed_file] = path
+                files[hashed_file] = filename
 
             users[uname] = users[uname] + [filename] if uname in users.keys() else [filename] # Adding to the user's list of icons
 
