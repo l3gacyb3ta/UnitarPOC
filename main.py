@@ -6,7 +6,7 @@ def uuid_gen():
   return uuid.uuid4().hex
 
 UPLOAD_FOLDER = 'icons'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'svg'}
+ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.tif', '.tiff', '.svg'}
 
 MEGABYTES = 5
 
@@ -36,15 +36,16 @@ def upload_file():
             return redirect(request.url)
 
         if file and allowed_file(file.filename):
-            filename = uuid_gen + os.path.splitext(file.filename)[1]
+            filename = uuid_gen() + os.path.splitext(file.filename)[1]
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(url_for('uploaded_icon',
                                     filename=filename))
+    
     return render_template("upload.html")
+
 
 @app.route('/icons/<filename>')
 def uploaded_icon(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               secure_filename(filename))
+    return send_from_directory(app.config['UPLOAD_FOLDER'], secure_filename(filename))
 
 app.run(host='0.0.0.0', port=8080)
