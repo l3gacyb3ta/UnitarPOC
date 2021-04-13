@@ -20,7 +20,7 @@ def allowed_file(filename):
   return os.path.splitext(filename)[1].lower() in ALLOWED_EXTENSIONS
 
 def hash(data):
-    return sha1(data)
+    return sha1(data).hexdigest()
 
 # Configure flask
 app = Flask(__name__)
@@ -29,6 +29,16 @@ app.config['MAX_CONTENT_LENGTH'] = MEGABYTES * 1024 * 1024
 app.config['SECRET_KEY'] = uuid_gen()
 
 users = {'test': ['9f67db172e2d4db99095bfc4cf23f527.jpg', 'hehe']}
+
+# File hashing index:
+files = {}
+
+for (dirpath, dirnames, filenames) in os.walk('icons'):
+    for filename in filenames:
+        path = os.sep.join([dirpath, filename])
+        files[hash(open(path, 'rb').read())] = filename
+
+print(files.keys())
 
 # Basic index
 @app.route('/')
@@ -58,14 +68,24 @@ def upload_file():
             filename = uuid_gen() + os.path.splitext(file.filename)[1]
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            users[uname] = users[uname] + [filename] if uname in users.keys() else [filename]
+            path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             
-            return redirect(url_for('uploaded_icon',
-                                    filename=filename))
+            
+            hashed_file = hash(open(path, 'rb').read())
+            # Make sure someone hasn't already uploaded the file the new user is uploading
+            if hashed_file in files.keys():
+                os.remove(path) # Delete the new file (This is the best I could find)
+                users[uname] = users[uname] + [files[hashed_file]] if uname in users.keys() else [files[hashed_file]] # Adding to the user's list of icons
+                return redirect(url_for('uploaded_icon', filename = files[hashed_file])) 
+
+            users[uname] = users[uname] + [filename] if uname in users.keys() else [filename] # Adding to the user's list of icons
+
+            # Give you your user page
+            return redirect("user/" + uname) 
     
     return render_template("upload.html")
 
-
+# Return an icon based on it's filename
 @app.route('/icons/<filename>')
 def uploaded_icon(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], secure_filename(filename))
@@ -100,7 +120,7 @@ def set_favorite(uname, icon):
 def user_icons(uname):
     return render_template("user.html", icons = users[uname], uname=uname)
 
-# Get the number 1 avatar from user
+# Get the number 1 (0) avatar from user
 @app.route('/avatar/<uname>')
 def get_best_avatar(uname):
     return send_from_directory(app.config['UPLOAD_FOLDER'], users[uname][0]) if uname in users.keys() else "ERROR USER NOT FOUND"
