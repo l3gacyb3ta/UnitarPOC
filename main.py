@@ -21,6 +21,11 @@ def allowed_file(filename):
   #Use the safer os.path.splitext instead of string manipulation
   return os.path.splitext(filename)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/')
+def index():
+    return render_template("index.html")
+
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
@@ -62,7 +67,7 @@ def set_favorite(uname, icon):
             return redirect("/")
         else:
             if icon in users[uname]:
-                x = users[uname].pop(icon)
+                x = users[uname].remove(icon)
                 y = users[uname][0]
                 users[uname][0] = icon
                 users[uname].append(y)
@@ -73,7 +78,7 @@ def set_favorite(uname, icon):
 
 @app.route('/user/<uname>')
 def user_icons(uname):
-    return render_template("user.html", icons = users[uname])
+    return render_template("user.html", icons = users[uname], uname=uname)
 
 @app.route('/avatar/<uname>')
 def get_best_avatar(uname):
