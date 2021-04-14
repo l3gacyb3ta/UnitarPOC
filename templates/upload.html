@@ -1,12 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Unitar</h1>
+
+<figure class="container-fluid" >
+  <h1 class="text-center">Unitar</h1>
+</figure>
 <hr>
-<h2>Upload new icon</h2>
+<h2 class="text-center">Upload new icon</h2>
 <form method=post enctype=multipart/form-data>
-  <input type=file name=file>
-  <input type=text name=uname>
+  <div class="mb-3 container-md">
+    <label for="formFile" class="form-label">Chose icon</label>
+    <input class="form-control" type="file" od="formFile" name=file>
+    <br>
+    <label for="unameIn" class="form-label">Username</label>
+    <input type="text" class="form-control" name=uname id="unameIn" aria-describedby="uname">
   <input type=submit value=Upload>
+</div>
 </form>
 {% endblock content %}

@@ -1,9 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="row justify-content-center">
+    <div class="col-auto">
+        
+        <table class="table-hover table table-responsive text-center" >
+            <tr>
+                <td>
+                    <h3>Default</h3>
+                </td>
+            </tr>
+            
+            <tr>
+            {% for icon in icons %}
 
-{% for icon in icons %}
-<a href="/set/{{ uname }}/{{ icon }}"><img src = "/icons/{{ icon }}"></a>
-{% endfor %}
-
+                <td style="padding:10px">
+                    <a href="/set/{{ uname }}/{{ icon }}"><img src = "/icons/{{ icon }}"></a>
+                </td>
+            {% endfor %}
+            </tr>
+        </table>
+    </div>
+</div>
 {% endblock content %}

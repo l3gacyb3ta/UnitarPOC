@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+#outer {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+
+#inner {
+  margin: auto;
+}
+</style>
+<div id="outer" class="container">
+    <div id="inner">
+        {% if error %}
+            <h1 style="color:red">{{ message }}</h1>
+        {% else %}
+            <h1>{{ message }}</h1>
+        {% endif %}
+    </div>
+  </div>
+{% endblock content %}
